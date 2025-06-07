@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Compressor & Resizer</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; text-align: center; }
+    input, button { margin: 1rem 0; }
+    canvas { max-width: 100%; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>Image Compressor & Resizer</h1>
+  <input type="file" id="upload" accept="image/*" /> <br />
+  Width: <input type="number" id="width" placeholder="Width" />
+  Height: <input type="number" id="height" placeholder="Height" /> <br />
+  Quality: <input type="range" id="quality" min="0.1" max="1" step="0.1" value="0.8" />
+  <button onclick="processImage()">Resize & Compress</button>
+  <br />
+  <canvas id="canvas"></canvas>
+  <br />
+  <button onclick="downloadImage()">Download</button>
+
+  <script>
+    let originalImage;
+
+    document.getElementById('upload').addEventListener('change', function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          originalImage = img;
+          drawImage(img);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function drawImage(img) {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+    }
+
+    function processImage() {
+      const width = parseInt(document.getElementById('width').value) || originalImage.width;
+      const height = parseInt(document.getElementById('height').value) || originalImage.height;
+      const quality = parseFloat(document.getElementById('quality').value);
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(originalImage, 0, 0, width, height);
+    }
+
+    function downloadImage() {
+      const canvas = document.getElementById('canvas');
+      const link = document.createElement('a');
+      const quality = parseFloat(document.getElementById('quality').value);
+      link.download = 'compressed-image.jpg';
+      link.href = canvas.toDataURL('image/jpeg', quality);
+      link.click();
+    }
+  </script>
+</body>
+</html>
