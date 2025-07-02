@@ -6,7 +6,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3820496689759025"
      crossorigin="anonymous"></script>
 
-<!-- Google Analytics GA4 (replace MEASUREMENT_ID later) -->
+<!-- Google Analytics GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TS4ZYC6KPN"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -29,6 +29,13 @@
   </style>
 </head>
 <body>
+  <nav style="text-align:center; margin-bottom: 2rem;">
+    <a href="index.html">홈</a> |
+    <a href="about.html">소개</a> |
+    <a href="contact.html">연락처</a> |
+    <a href="privacy.html">개인정보처리방침</a> |
+    <a href="terms.html">이용약관</a>
+  </nav>
 
 <!-- Top Ad -->
 <ins class="adsbygoogle"
@@ -39,169 +46,168 @@
      data-full-width-responsive="true"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 
+<h1>🧰 Free Online Image Tools</h1>
+<p>Compress, resize, remove background, and generate thumbnails all in one place.</p>
 
-  <h1>🧰 Free Online Image Tools</h1>
-  <p>Compress, resize, remove background, and generate thumbnails all in one place.</p>
+<!-- Compress & Resize -->
+<div>
+  <h2>🗜 Compress & Resize</h2>
+  <input type="file" id="upload" accept="image/*" /> <br />
+  Width: <input type="number" id="width" placeholder="Width" />
+  Height: <input type="number" id="height" placeholder="Height" /> <br />
+  Quality: <input type="range" id="quality" min="0.1" max="1" step="0.1" value="0.8" />
+  <button onclick="processImage()">Resize & Compress</button>
+  <br />
+  <canvas id="canvas"></canvas>
+  <br />
+  <button onclick="downloadImage()">Download</button>
+</div>
 
-  <!-- Compress & Resize -->
-  <div>
-    <h2>🗜 Compress & Resize</h2>
-    <input type="file" id="upload" accept="image/*" /> <br />
-    Width: <input type="number" id="width" placeholder="Width" />
-    Height: <input type="number" id="height" placeholder="Height" /> <br />
-    Quality: <input type="range" id="quality" min="0.1" max="1" step="0.1" value="0.8" />
-    <button onclick="processImage()">Resize & Compress</button>
-    <br />
-    <canvas id="canvas"></canvas>
-    <br />
-    <button onclick="downloadImage()">Download</button>
-  </div>
+<!-- Background Remover -->
+<div class="section">
+  <h2>❌ Background Remover</h2>
+  <input type="file" id="bgUpload" accept="image/*" />
+  <br />
+  <button onclick="removeBackground()">Remove Background</button>
+  <br />
+  <img id="bgResult" src="" style="margin-top:1rem; max-width:100%;" />
+</div>
 
-  <!-- Background Remover -->
-  <div class="section">
-    <h2>❌ Background Remover</h2>
-    <input type="file" id="bgUpload" accept="image/*" />
-    <br />
-    <button onclick="removeBackground()">Remove Background</button>
-    <br />
-    <img id="bgResult" src="" style="margin-top:1rem; max-width:100%;" />
-  </div>
+<!-- Thumbnail Generator -->
+<div class="section">
+  <h2>🖼 Thumbnail Generator</h2>
+  <input type="file" id="thumbUpload" accept="image/*" /><br />
+  <textarea id="thumbText" rows="2" cols="40" placeholder="Enter overlay text here..."></textarea><br />
+  Font Size: <input type="number" id="thumbFontSize" value="30" style="width:60px;" /> px<br />
+  Text Color: <input type="color" id="thumbColor" value="#ffffff" /><br />
+  Vertical Position:
+  <select id="thumbPosition">
+    <option value="top">Top</option>
+    <option value="middle">Middle</option>
+    <option value="bottom" selected>Bottom</option>
+  </select><br />
+  <button onclick="generateThumbnail()">Generate Thumbnail</button>
+  <br />
+  <canvas id="thumbCanvas"></canvas><br />
+  <button onclick="downloadThumb()">Download Thumbnail</button>
+</div>
 
-  <!-- Thumbnail Generator -->
-  <div class="section">
-    <h2>🖼 Thumbnail Generator</h2>
-    <input type="file" id="thumbUpload" accept="image/*" /><br />
-    <textarea id="thumbText" rows="2" cols="40" placeholder="Enter overlay text here..."></textarea><br />
-    Font Size: <input type="number" id="thumbFontSize" value="30" style="width:60px;" /> px<br />
-    Text Color: <input type="color" id="thumbColor" value="#ffffff" /><br />
-    Vertical Position:
-    <select id="thumbPosition">
-      <option value="top">Top</option>
-      <option value="middle">Middle</option>
-      <option value="bottom" selected>Bottom</option>
-    </select><br />
-    <button onclick="generateThumbnail()">Generate Thumbnail</button>
-    <br />
-    <canvas id="thumbCanvas"></canvas><br />
-    <button onclick="downloadThumb()">Download Thumbnail</button>
-  </div>
+<script>
+// Compress & Resize
+let originalImage;
+document.getElementById('upload').addEventListener('change', function (e) {
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const img = new Image();
+    img.onload = function () {
+      originalImage = img;
+      drawImage(img);
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(e.target.files[0]);
+});
 
-  <script>
-    // Compress & Resize
-    let originalImage;
-    document.getElementById('upload').addEventListener('change', function (e) {
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const img = new Image();
-        img.onload = function () {
-          originalImage = img;
-          drawImage(img);
-        };
-        img.src = event.target.result;
-      };
-      reader.readAsDataURL(e.target.files[0]);
-    });
+function drawImage(img) {
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0);
+}
 
-    function drawImage(img) {
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
+function processImage() {
+  const width = parseInt(document.getElementById('width').value) || originalImage.width;
+  const height = parseInt(document.getElementById('height').value) || originalImage.height;
+  const quality = parseFloat(document.getElementById('quality').value);
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = width;
+  canvas.height = height;
+  ctx.drawImage(originalImage, 0, 0, width, height);
+}
+
+function downloadImage() {
+  const canvas = document.getElementById('canvas');
+  const quality = parseFloat(document.getElementById('quality').value);
+  const link = document.createElement('a');
+  link.download = 'compressed-image.jpg';
+  link.href = canvas.toDataURL('image/jpeg', quality);
+  link.click();
+}
+
+// Background Remover
+async function removeBackground() {
+  const input = document.getElementById('bgUpload');
+  const file = input.files[0];
+  if (!file) return alert("Please upload an image first.");
+
+  const formData = new FormData();
+  formData.append("image_file", file);
+  formData.append("size", "auto");
+
+  const response = await fetch("https://api.remove.bg/v1.0/removebg", {
+    method: "POST",
+    headers: {
+      "X-Api-Key": "free-or-placeholder-key"
+    },
+    body: formData
+  });
+
+  if (!response.ok) {
+    alert("API 호출이 실패했거나 무료 사용량이 초과되었습니다.");
+    return;
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  document.getElementById('bgResult').src = url;
+}
+
+// Thumbnail Generator
+function generateThumbnail() {
+  const fileInput = document.getElementById('thumbUpload');
+  const text = document.getElementById('thumbText').value;
+  const fontSize = parseInt(document.getElementById('thumbFontSize').value) || 30;
+  const textColor = document.getElementById('thumbColor').value;
+  const position = document.getElementById('thumbPosition').value;
+  const canvas = document.getElementById('thumbCanvas');
+  const ctx = canvas.getContext('2d');
+
+  if (!fileInput.files[0]) return alert("Upload an image first.");
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function () {
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0);
-    }
 
-    function processImage() {
-      const width = parseInt(document.getElementById('width').value) || originalImage.width;
-      const height = parseInt(document.getElementById('height').value) || originalImage.height;
-      const quality = parseFloat(document.getElementById('quality').value);
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = width;
-      canvas.height = height;
-      ctx.drawImage(originalImage, 0, 0, width, height);
-    }
+      let y = canvas.height - 60;
+      if (position === "top") y = 60;
+      if (position === "middle") y = canvas.height / 2;
 
-    function downloadImage() {
-      const canvas = document.getElementById('canvas');
-      const quality = parseFloat(document.getElementById('quality').value);
-      const link = document.createElement('a');
-      link.download = 'compressed-image.jpg';
-      link.href = canvas.toDataURL('image/jpeg', quality);
-      link.click();
-    }
+      ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+      ctx.fillRect(0, y - 40, canvas.width, 60);
 
-    // Background Remover
-    async function removeBackground() {
-      const input = document.getElementById('bgUpload');
-      const file = input.files[0];
-      if (!file) return alert("Please upload an image first.");
+      ctx.fillStyle = textColor;
+      ctx.font = "bold " + fontSize + "px sans-serif";
+      ctx.fillText(text, 20, y);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(fileInput.files[0]);
+}
 
-      const formData = new FormData();
-      formData.append("image_file", file);
-      formData.append("size", "auto");
-
-      const response = await fetch("https://api.remove.bg/v1.0/removebg", {
-        method: "POST",
-        headers: {
-          "X-Api-Key": "free-or-placeholder-key"
-        },
-        body: formData
-      });
-
-      if (!response.ok) {
-        alert("API 호출이 실패했거나 무료 사용량이 초과되었습니다.");
-        return;
-      }
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      document.getElementById('bgResult').src = url;
-    }
-
-    // Thumbnail Generator
-    function generateThumbnail() {
-      const fileInput = document.getElementById('thumbUpload');
-      const text = document.getElementById('thumbText').value;
-      const fontSize = parseInt(document.getElementById('thumbFontSize').value) || 30;
-      const textColor = document.getElementById('thumbColor').value;
-      const position = document.getElementById('thumbPosition').value;
-      const canvas = document.getElementById('thumbCanvas');
-      const ctx = canvas.getContext('2d');
-
-      if (!fileInput.files[0]) return alert("Upload an image first.");
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function () {
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-
-          let y = canvas.height - 60;
-          if (position === "top") y = 60;
-          if (position === "middle") y = canvas.height / 2;
-
-          ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-          ctx.fillRect(0, y - 40, canvas.width, 60);
-
-          ctx.fillStyle = textColor;
-          ctx.font = "bold " + fontSize + "px sans-serif";
-          ctx.fillText(text, 20, y);
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(fileInput.files[0]);
-    }
-
-    function downloadThumb() {
-      const canvas = document.getElementById('thumbCanvas');
-      const link = document.createElement('a');
-      link.download = 'thumbnail.jpg';
-      link.href = canvas.toDataURL('image/jpeg');
-      link.click();
-    }
-  </script>
+function downloadThumb() {
+  const canvas = document.getElementById('thumbCanvas');
+  const link = document.createElement('a');
+  link.download = 'thumbnail.jpg';
+  link.href = canvas.toDataURL('image/jpeg');
+  link.click();
+}
+</script>
 
 <!-- Bottom Ad -->
 <ins class="adsbygoogle"
